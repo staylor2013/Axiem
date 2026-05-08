@@ -10,12 +10,28 @@
 
   <h1>Axiem 🔥</h1>
 
+  <input id="username" placeholder="Username">
+  <br><br>
+
+  <input id="password" type="password" placeholder="Password">
+  <br><br>
+
   <button onclick="register()">Register</button>
   <button onclick="login()">Login</button>
 
   <pre id="output"></pre>
 
   <script>
+
+    function getData() {
+
+      return {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+      }
+
+    }
+
 
     async function register() {
 
@@ -26,21 +42,18 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            username: "test",
-            password: "1234"
-          })
+          body: JSON.stringify(getData())
         })
 
         const data = await res.json()
 
         document.getElementById("output").textContent =
-          "REGISTER:\n" + JSON.stringify(data, null, 2)
+          JSON.stringify(data, null, 2)
 
       } catch (err) {
 
         document.getElementById("output").textContent =
-          "ERROR:\n" + err
+          err
 
       }
 
@@ -56,21 +69,18 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            username: "test",
-            password: "1234"
-          })
+          body: JSON.stringify(getData())
         })
 
         const data = await res.json()
 
         document.getElementById("output").textContent =
-          "LOGIN:\n" + JSON.stringify(data, null, 2)
+          JSON.stringify(data, null, 2)
 
       } catch (err) {
 
         document.getElementById("output").textContent =
-          "ERROR:\n" + err
+          err
 
       }
 
