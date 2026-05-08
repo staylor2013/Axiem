@@ -10,14 +10,43 @@
 
   <h1>Axiem 🔥</h1>
 
-  <input id="username" placeholder="Username">
-  <br><br>
+  <div>
 
-  <input id="password" type="password" placeholder="Password">
-  <br><br>
+    <label>Username</label>
+    <br>
 
-  <button onclick="register()">Register</button>
-  <button onclick="login()">Login</button>
+    <input
+      id="username"
+      type="text"
+      placeholder="Enter username"
+    >
+
+  </div>
+
+  <br>
+
+  <div>
+
+    <label>Password</label>
+    <br>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Enter password"
+    >
+
+  </div>
+
+  <br>
+
+  <button onclick="register()">
+    Register
+  </button>
+
+  <button onclick="login()">
+    Login
+  </button>
 
   <pre id="output"></pre>
 
@@ -31,7 +60,6 @@
       }
 
     }
-
 
     async function register() {
 
@@ -58,7 +86,6 @@
       }
 
     }
-
 
     async function login() {
 
