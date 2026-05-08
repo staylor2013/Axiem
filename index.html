@@ -1,58 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Python Server Test</title>
+  <title>Axiem</title>
 </head>
+
 <body>
 
-  <h1>Python Server Test</h1>
+  <h1>Axiem 🔥</h1>
+
   <button onclick="register()">Register</button>
-  <br>
   <button onclick="login()">Login</button>
+
   <pre id="output"></pre>
 
   <script>
-    const API = "http://localhost:1234";
 
     async function register() {
+
       try {
-        const res = await fetch(API + "/register", {
+
+        const res = await fetch("/register", {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             username: "test",
             password: "1234"
           })
-        });
+        })
 
-        const text = await res.text();
-        document.getElementById("output").textContent = "REGISTER: " + text;
+        const data = await res.json()
+
+        document.getElementById("output").textContent =
+          "REGISTER:\n" + JSON.stringify(data, null, 2)
 
       } catch (err) {
-        document.getElementById("output").textContent = "ERROR: " + err;
+
+        document.getElementById("output").textContent =
+          "ERROR:\n" + err
+
       }
+
     }
+
 
     async function login() {
+
       try {
-        const res = await fetch(API + "/login", {
+
+        const res = await fetch("/login", {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             username: "test",
             password: "1234"
           })
-        });
+        })
 
-        const text = await res.text();
-        document.getElementById("output").textContent = "LOGIN: " + text;
+        const data = await res.json()
+
+        document.getElementById("output").textContent =
+          "LOGIN:\n" + JSON.stringify(data, null, 2)
 
       } catch (err) {
-        document.getElementById("output").textContent = "ERROR: " + err;
+
+        document.getElementById("output").textContent =
+          "ERROR:\n" + err
+
       }
+
     }
+
   </script>
 
 </body>
+
 </html>
