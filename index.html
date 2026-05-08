@@ -52,68 +52,103 @@
 
   <script>
 
-    function getData() {
+  function getData() {
 
-      return {
-        username: document.getElementById("username").value,
-        password: document.getElementById("password").value
-      }
+    return {
+      username: document.getElementById("username").value,
+      password: document.getElementById("password").value
+    }
+
+  }
+
+
+  function showMessage(data) {
+
+    const output = document.getElementById("output")
+
+    // Success
+    if (data.success === true) {
+
+      output.textContent =
+        "✅ " + data.message
 
     }
 
-    async function register() {
+    // Failure
+    else {
 
-      try {
-
-        const res = await fetch("/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(getData())
-        })
-
-        const data = await res.json()
-
-        document.getElementById("output").textContent =
-          JSON.stringify(data, null, 2)
-
-      } catch (err) {
-
-        document.getElementById("output").textContent =
-          err
-
-      }
+      output.textContent =
+        "❌ " + data.message
 
     }
 
-    async function login() {
+  }
 
-      try {
 
-        const res = await fetch("/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(getData())
-        })
+  async function register() {
 
-        const data = await res.json()
+    try {
 
-        document.getElementById("output").textContent =
-          JSON.stringify(data, null, 2)
+      const res = await fetch("/register", {
 
-      } catch (err) {
+        method: "POST",
 
-        document.getElementById("output").textContent =
-          err
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-      }
+        body: JSON.stringify(getData())
+
+      })
+
+      const data = await res.json()
+
+      showMessage(data)
 
     }
 
-  </script>
+    catch (err) {
+
+      document.getElementById("output").textContent =
+        "❌ Server error"
+
+    }
+
+  }
+
+
+  async function login() {
+
+    try {
+
+      const res = await fetch("/login", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(getData())
+
+      })
+
+      const data = await res.json()
+
+      showMessage(data)
+
+    }
+
+    catch (err) {
+
+      document.getElementById("output").textContent =
+        "❌ Server error"
+
+    }
+
+  }
+
+</script>
 
 </body>
 
