@@ -10,145 +10,96 @@
 
   <h1>Axiem 🔥</h1>
 
-  <div>
-
-    <label>Username</label>
-    <br>
-
-    <input
-      id="username"
-      type="text"
-      placeholder="Enter username"
-    >
-
-  </div>
-
+  <label>Username: <input type="text" id="username"></label>
   <br>
-
-  <div>
-
-    <label>Password</label>
-    <br>
-
-    <input
-      id="password"
-      type="password"
-      placeholder="Enter password"
-    >
-
-  </div>
-
+  <label>Password: <input type="password" id="password"></label>
   <br>
-
-  <button onclick="register()">
-    Register
-  </button>
-
-  <button onclick="login()">
-    Login
-  </button>
+  <button onclick="register()">Register</button>
+  <button onclick="login()">Login</button>
 
   <pre id="output"></pre>
 
   <script>
 
-  function getData() {
+function getData() {
 
-    return {
-      username: document.getElementById("username").value,
-      password: document.getElementById("password").value
-    }
+  return {
 
-  }
+    username:
+      document.getElementById("username").value,
 
-
-  function showMessage(data) {
-
-    const output = document.getElementById("output")
-
-    // Success
-    if (data.success === true) {
-
-      output.textContent =
-        "✅ " + data.message
-
-    }
-
-    // Failure
-    else {
-
-      output.textContent =
-        "❌ " + data.message
-
-    }
+    password:
+      document.getElementById("password").value
 
   }
 
+}
 
-  async function register() {
 
-    try {
+function showMessage(data) {
 
-      const res = await fetch("/register", {
+  const output =
+    document.getElementById("output")
 
-        method: "POST",
+  if (data.success) {
 
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(getData())
-
-      })
-
-      const data = await res.json()
-
-      showMessage(data)
-
-    }
-
-    catch (err) {
-
-      document.getElementById("output").textContent =
-        "❌ Server error"
-
-    }
+    output.textContent =
+      "✅ " + data.message
 
   }
 
+  else {
 
-  async function login() {
-
-    try {
-
-      const res = await fetch("/login", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(getData())
-
-      })
-
-      const data = await res.json()
-
-      showMessage(data)
-
-    }
-
-    catch (err) {
-
-      document.getElementById("output").textContent =
-        "❌ Server error"
-
-    }
+    output.textContent =
+      "❌ " + data.message
 
   }
 
-</script>
+}
+
+
+async function register() {
+
+  const res = await fetch("/register", {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify(getData())
+
+  })
+
+  const data = await res.json()
+
+  showMessage(data)
+
+}
+
+
+async function login() {
+
+  const res = await fetch("/login", {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify(getData())
+
+  })
+
+  const data = await res.json()
+
+  showMessage(data)
+
+}
+
+  </script>
 
 </body>
 
