@@ -1,51 +1,44 @@
 from flask import Flask, send_file, request, jsonify
+import sqlite3
 import os
-import json
 
 app = Flask(__name__)
 
-DB_FILE = "data.json"
+# =========================
+# CREATE DATABASE
+# =========================
 
+with sqlite3.connect("data.db") as conn:
+    cursor = conn.cursor()
 
-# ---------------------------------
-# Create database file if missing
-# ---------------------------------
-if not os.path.exists(DB_FILE):
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+    )
+    """)
 
-    with open(DB_FILE, "w") as f:
-        json.dump({"users": []}, f)
+    conn.commit()
 
+# =========================
+# ROUTES
+# =========================
 
-# ---------------------------------
-# Load database
-# ---------------------------------
-def load_db():
-
-    with open(DB_FILE, "r") as f:
-        return json.load(f)
-
-
-# ---------------------------------
-# Save database
-# ---------------------------------
-def save_db(data):
-
-    with open(DB_FILE, "w") as f:
-        json.dump(data, f, indent=2)
-
-
-# ---------------------------------
-# Homepage
-# ---------------------------------
 @app.route("/")
 def home():
-
     return send_file("index.html")
 
 
-# ---------------------------------
-# Register
-# ---------------------------------
+@app.route("/forum")
+def forum():
+    return send_file("forum.html")
+
+
+# =========================
+# REGISTER
+# =========================
+
 @app.route("/register", methods=["POST"])
 def register():
 
@@ -54,35 +47,45 @@ def register():
     username = data.get("username")
     password = data.get("password")
 
-    db = load_db()
+    if not username or not password:
+        return jsonify({
+            "success": False,
+            "message": "Fill in all fields"
+        })
 
-    # Check if user exists
-    for user in db["users"]:
+    try:
+        with sqlite3.connect("data.db", timeout=5) as conn:
+            cursor = conn.cursor()
 
-        if user["username"] == username:
+            cursor.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)",
+                (username, password)
+            )
 
-            return jsonify({
-                "success": False,
-                "message": "Username already exists"
-            })
+            conn.commit()
 
-    # Add user
-    db["users"].append({
-        "username": username,
-        "password": password
-    })
+        return jsonify({
+            "success": True,
+            "message": "Registered successfully"
+        })
 
-    save_db(db)
+    except sqlite3.IntegrityError:
+        return jsonify({
+            "success": False,
+            "message": "Username already exists"
+        })
 
-    return jsonify({
-        "success": True,
-        "message": "Registered successfully"
-    })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        })
 
 
-# ---------------------------------
-# Login
-# ---------------------------------
+# =========================
+# LOGIN
+# =========================
+
 @app.route("/login", methods=["POST"])
 def login():
 
@@ -91,35 +94,34 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    db = load_db()
+    with sqlite3.connect("data.db", timeout=5) as conn:
+        cursor = conn.cursor()
 
-    for user in db["users"]:
+        cursor.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (username, password)
+        )
 
-        if (
-            user["username"] == username
-            and
-            user["password"] == password
-        ):
+        user = cursor.fetchone()
 
-            return jsonify({
-                "success": True,
-                "message": "Login successful"
-            })
+    if user:
+        return jsonify({
+            "success": True,
+            "message": "Login successful"
+        })
 
-    return jsonify({
-        "success": False,
-        "message": "Invalid username or password"
-    })
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid username or password"
+        })
 
 
-# ---------------------------------
-# Run server
-# ---------------------------------
+# =========================
+# START SERVER
+# =========================
+
+port = int(os.environ.get("PORT", 10000))
+
 if __name__ == "__main__":
-
-    port = int(os.environ.get("PORT", 10000))
-
-    app.run(
-        host="0.0.0.0",
-        port=port
-    )
+    app.run(host="0.0.0.0", port=port)
